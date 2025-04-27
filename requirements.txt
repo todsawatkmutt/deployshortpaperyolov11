@@ -3,3 +3,4 @@ ultralytics
 pillow
 numpy
 opencv-python
+python-3.11.12
