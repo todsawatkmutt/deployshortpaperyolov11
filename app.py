@@ -1,13 +1,29 @@
+import os
+import requests
 import streamlit as st
 from ultralytics import YOLO
 from PIL import Image
 import numpy as np
 
-# 1) โหลดโมเดลจาก path ของคุณ
-MODEL_PATH = "/content/ultralytics11/runs/detect/train/weights/best.pt"
+# where we'll store the pt locally
+MODEL_PATH = "best.pt"
+# your raw GitHub URL (note the %20 for the space)
+RAW_URL    = (
+    "https://raw.githubusercontent.com/"
+    "todsawatkmutt/deployshortpaperyolov11/main/best%20(2).pt"
+)
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def load_model():
+    # download if missing
+    if not os.path.exists(MODEL_PATH):
+        with st.spinner("Downloading weights…"):
+            r = requests.get(RAW_URL, stream=True)
+            r.raise_for_status()
+            with open(MODEL_PATH, "wb") as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    f.write(chunk)
+    # now load with ultralytics
     return YOLO(MODEL_PATH)
 
 model = load_model()
@@ -19,12 +35,6 @@ if uploaded:
     img = Image.open(uploaded).convert("RGB")
     st.image(img, caption="Uploaded Image", use_column_width=True)
 
-    # 2) รัน inference
-    img_array = np.array(img)
-    results = model.predict(source=img_array, conf=0.25, imgsz=1088)
-
-    # 3) วาดกรอบบนภาพ
+    results = model.predict(source=np.array(img), conf=0.25, imgsz=1088)
     annotated = results[0].plot()
-
-    # 4) แสดงผล
     st.image(annotated, caption="Detection Result", use_column_width=True)
