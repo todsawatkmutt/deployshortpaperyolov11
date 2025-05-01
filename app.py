@@ -5,11 +5,10 @@ from ultralytics import YOLO
 from PIL import Image
 import numpy as np
 
-# 1) ชื่อไฟล์โมเดลและ URL สำหรับดาวน์โหลดจาก GitHub
 MODEL_PATH = "best.pt"
 RAW_URL = (
     "https://raw.githubusercontent.com/"
-    "todsawatkmutt/deployshortpaperyolov11/main/best%20(2).pt"
+    "todsawatkmutt/deployshortpaperyolov11/main/best%20(3).pt"
 )
 
 @st.cache_resource(show_spinner=False)
