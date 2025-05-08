@@ -35,14 +35,12 @@ def _download(url: str, dst: str):
 
 @st.cache_resource(show_spinner="🚀 Loading model…")
 def load_model():
-    # ถ้าไฟล์ไม่มี ให้ดาวน์โหลด
     if not os.path.exists(MODEL_PATH):
         if not RAW_URL:
             st.error("❌ ไม่พบ MODEL_PATH และ RAW_URL")
             st.stop()
         _download(RAW_URL, MODEL_PATH)
 
-    # พยายามโหลดโมเดล ถ้าไฟล์เสีย (UnpicklingError) ให้ลบแล้วดาวน์โหลดใหม่
     try:
         return YOLO(MODEL_PATH)
     except UnpicklingError:
@@ -53,23 +51,32 @@ def load_model():
 
 model = load_model()
 
-# ─── UI ──────────────────────────────────────────────────────
+# ─── หน้า UI ─────────────────────────────────────────────────
 st.title("🕵️ Crack Detection with YOLOv11")
 
 uploaded = st.file_uploader("⬆️ Upload an image (JPG/PNG)", type=["jpg","jpeg","png"])
 if uploaded:
-    img = Image.open(uploaded).convert("RGB")
-    st.image(img, caption="Original", use_container_width=True)
+    # อ่านเป็น PIL แล้วแปลงเป็น NumPy array สำหรับ st.image และ model.predict
+    img_pil = Image.open(uploaded).convert("RGB")
+    img = np.asarray(img_pil)
+    st.image(img, caption="Original Image", use_container_width=True)
 
     with st.spinner("Detecting…"):
         results = model.predict(
-            source=np.asarray(img),
-            imgsz=1088, conf=0.25, device="cpu"
+            source=img,
+            imgsz=1088,
+            conf=0.25,
+            device="cpu"  # เปลี่ยนเป็น "0" ถ้ามี GPU
         )
+
     annotated = results[0].plot()
     st.image(annotated, caption="Detection Result", use_container_width=True)
 
     buf = io.BytesIO()
     Image.fromarray(annotated).save(buf, format="PNG")
-    st.download_button("💾 Download result", buf.getvalue(),
-                       file_name="result.png", mime="image/png")
+    st.download_button(
+        "💾 Download Result",
+        data=buf.getvalue(),
+        file_name="detection_result.png",
+        mime="image/png"
+    )
