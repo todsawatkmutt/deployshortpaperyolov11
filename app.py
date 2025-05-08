@@ -58,7 +58,7 @@ uploaded = st.file_uploader("⬆️ Upload an image (JPG/PNG)", type=["jpg","jpe
 if uploaded:
     # อ่านเป็น PIL.Image แล้วแสดงด้วย PIL
     img_pil = Image.open(uploaded).convert("RGB")
-    st.image(img_pil, caption="Original Image", use_container_width=True)
+    st.image(img_pil, caption="Original Image", use_column_width=True)
 
     # เตรียม numpy array สำหรับ prediction
     frame = np.asarray(img_pil)
@@ -72,7 +72,7 @@ if uploaded:
         )
 
     annotated = results[0].plot()
-    st.image(annotated, caption="Detection Result", use_container_width=True)
+    st.image(annotated, caption="Detection Result", use_column_width=True)
 
     buf = io.BytesIO()
     Image.fromarray(annotated).save(buf, format="PNG")
