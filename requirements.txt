@@ -5,4 +5,3 @@ numpy
 opencv-python-headless
 requests
 python-dotenv
-pickle
