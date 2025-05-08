@@ -1,4 +1,6 @@
 import os
+# ปิด torch.load แบบ weights-only (Torch ≥ 2.6 จะ default เป็น weights_only=True)
+os.environ["TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD"] = "1"
 import io
 import requests
 import numpy as np
