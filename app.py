@@ -56,14 +56,16 @@ st.title("🕵️ Crack Detection with YOLOv11")
 
 uploaded = st.file_uploader("⬆️ Upload an image (JPG/PNG)", type=["jpg","jpeg","png"])
 if uploaded:
-    # อ่านเป็น PIL แล้วแปลงเป็น NumPy array สำหรับ st.image และ model.predict
+    # อ่านเป็น PIL.Image แล้วแสดงด้วย PIL
     img_pil = Image.open(uploaded).convert("RGB")
-    img = np.asarray(img_pil)
-    st.image(img, caption="Original Image", use_container_width=True)
+    st.image(img_pil, caption="Original Image", use_container_width=True)
+
+    # เตรียม numpy array สำหรับ prediction
+    frame = np.asarray(img_pil)
 
     with st.spinner("Detecting…"):
         results = model.predict(
-            source=img,
+            source=frame,
             imgsz=1088,
             conf=0.25,
             device="cpu"  # เปลี่ยนเป็น "0" ถ้ามี GPU
