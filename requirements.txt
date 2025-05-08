@@ -1,7 +1,10 @@
-streamlit
-ultralytics
-pillow
-numpy
-opencv-python-headless
-requests
-python-dotenv
+streamlit==1.34.0
+ultralytics==8.3.126
+torch==2.5.2
+torchvision==0.18.2
+torchaudio==2.5.2
+pillow==10.4.0
+numpy==1.26.4
+opencv-python-headless==4.10.0.82
+requests==2.32.3
+python-dotenv==1.0.1
